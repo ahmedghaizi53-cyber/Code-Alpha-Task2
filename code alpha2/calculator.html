@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starry Keyboard Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0b0f19;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Starry Background */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: transparent;
+            box-shadow: 
+                20vw 10vh #fff, 80vw 20vh #fff, 40vw 50vh #fff, 70vw 70vh #fff, 
+                15vw 80vh #fff, 90vw 45vh #fff, 30vw 30vh #fff, 60vw 15vh #fff,
+                50vw 85vh #fff, 85vw 90vh #fff, 10vw 60vh #fff, 75vw 40vh #fff;
+            animation: starsAnimation 100s linear infinite;
+        }
+
+        @keyframes starsAnimation {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100vh); }
+        }
+
+        /* Calculator Container (Height Kam Kar Di Hai) */
+        .calculator {
+            background-color: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 330px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        /* Display (Height Kam Kar Di Hai) */
+        #display {
+            width: 100%;
+            height: 55px;
+            background-color: #0f172a;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            color: #00ffcc;
+            font-size: 1.8rem;
+            text-align: right;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        /* Buttons Padding Kam Kar Di Hai */
+        .btn {
+            padding: 14px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background-color: #334155;
+            color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #475569;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .operator {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .operator:hover {
+            background-color: #2563eb;
+        }
+
+        .clear {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .clear:hover {
+            background-color: #dc2626;
+        }
+
+        /* Equal Button ki Grid Height Adjust Ki */
+        .equal {
+            grid-row: span 2;
+            background-color: #10b981;
+            color: white;
+        }
+
+        .equal:hover {
+            background-color: #059669;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input type="text" id="display" readonly placeholder="0">
+        
+        <div class="buttons">
+            <button class="btn clear" onclick="clearDisplay()">C</button>
+            <button class="btn operator" onclick="appendValue('/')">/</button>
+            <button class="btn operator" onclick="appendValue('*')">*</button>
+            <button class="btn operator" onclick="deleteLast()">⌫</button>
+
+            <button class="btn" onclick="appendValue('7')">7</button>
+            <button class="btn" onclick="appendValue('8')">8</button>
+            <button class="btn" onclick="appendValue('9')">9</button>
+            <button class="btn operator" onclick="appendValue('-')">-</button>
+
+            <button class="btn" onclick="appendValue('4')">4</button>
+            <button class="btn" onclick="appendValue('5')">5</button>
+            <button class="btn" onclick="appendValue('6')">6</button>
+            <button class="btn operator" onclick="appendValue('+')">+</button>
+
+            <button class="btn" onclick="appendValue('1')">1</button>
+            <button class="btn" onclick="appendValue('2')">2</button>
+            <button class="btn" onclick="appendValue('3')">3</button>
+            <button class="btn equal" onclick="calculate()">=</button>
+
+            <button class="btn zero" onclick="appendValue('0')">0</button>
+            <button class="btn" onclick="appendValue('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+
+        function appendValue(input) {
+            display.value += input;
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        function calculate() {
+            try {
+                if (display.value) {
+                    display.value = eval(display.value);
+                }
+            } catch (error) {
+                display.value = "Error";
+            }
+        }
+
+        // Keyboard Support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+
+            if ((key >= '0' && key <= '9') || ['+', '-', '*', '/', '.'].includes(key)) {
+                appendValue(key);
+            }
+            else if (key === 'Enter') {
+                event.preventDefault();
+                calculate();
+            }
+            else if (key === 'Backspace') {
+                deleteLast();
+            }
+            else if (key === 'Escape') {
+                clearDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
